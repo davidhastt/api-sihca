@@ -3,7 +3,9 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import info from './routes/info.route';
 import infoPersonas from './routes/personas.route';
-import infoConstrucciones from './routes/construcciones.route'
+import infoConstrucciones from './routes/construcciones.route';
+import spatyalInfo from './routes/spatyal.route';
+
 
 // Carga las variables desde el archivo .env
 dotenv.config()
@@ -19,6 +21,7 @@ app.use(cors());
 app.use(info);
 app.use(infoPersonas);
 app.use(infoConstrucciones);
+app.use(spatyalInfo);
 
 
 const puerto=process.env.PORT

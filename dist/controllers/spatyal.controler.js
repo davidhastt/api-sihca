@@ -9,14 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tiendasnear = void 0;
+exports.getCapitales = void 0;
 const database_1 = require("../database");
-const tiendasnear = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let query = 'SELECT *' +
-        'FROM tiendas ' +
-        'INNER JOIN ubicaciones ' +
-        'ON tiendas.id_tienda =ubicaciones.id_tp ' +
-        'WHERE ST_DWithin(ubicaciones.xy, ST_SetSRID(ST_MakePoint(-99.67688542843177, 19.28662076007736), 4326), 0.10);';
+const getCapitales = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let query = 'SELECT capital, pobtot, altitud,  ST_X(geom) AS x, ST_Y(geom) AS y FROM capitales;';
     try {
         const response = yield database_1.pool.query(query);
         console.log(response.rows);
@@ -27,4 +23,4 @@ const tiendasnear = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         return res.status(500).json({ "error": [`NodeJS dice ${e}`] });
     }
 });
-exports.tiendasnear = tiendasnear;
+exports.getCapitales = getCapitales;

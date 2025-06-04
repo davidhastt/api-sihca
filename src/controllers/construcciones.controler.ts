@@ -16,14 +16,14 @@ export const getConstruccionesByAGEE=async (req:Request, res:Response): Promise<
         if (response.rowCount > 0){
             const construcciones:Construccion[]=response.rows;
             return res.status(200).json({
-                "message":"Construcciones encontradas",
+                "message":"Construcciones encontradas exitosamente",
                 "status":200,
                 "Respuesta": [construcciones]
             });             
         }
         else{
             return res.status(200).json({
-                "message":"Construcciones encontradas",
+                "message":"Construcciones encontradas exitosamente",
                 "status":200,
                 "Respuesta": []
             }); 

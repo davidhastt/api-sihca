@@ -1,9 +1,9 @@
 import {Router} from 'express';
 const router = Router();
 
-import {tiendasnear} from "../controllers/spatyal.controler";
+import {getCapitales} from "../controllers/spatyal.controler";
 //inicio
-router.get('/tiendasnear', tiendasnear);
+router.get('/spatyal/getCapitales', getCapitales);
 
 
 export default router;

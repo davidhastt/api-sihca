@@ -4,12 +4,9 @@ import { pool } from "../database";
 
 
 
-export const tiendasnear= async(req:Request, res:Response): Promise<Response>=>{
-    let query:string ='SELECT *' +
-    'FROM tiendas ' +
-    'INNER JOIN ubicaciones ' +
-    'ON tiendas.id_tienda =ubicaciones.id_tp ' +
-    'WHERE ST_DWithin(ubicaciones.xy, ST_SetSRID(ST_MakePoint(-99.67688542843177, 19.28662076007736), 4326), 0.10);'
+export const getCapitales= async(req:Request, res:Response): Promise<Response>=>{
+
+    let query:string ='SELECT capital, pobtot, altitud,  ST_X(geom) AS x, ST_Y(geom) AS y FROM capitales;'
 
     try{
         const response: QueryResult= await pool.query(query);
@@ -20,5 +17,5 @@ export const tiendasnear= async(req:Request, res:Response): Promise<Response>=>{
         console.log(e);
         return res.status(500).json({"error":[`NodeJS dice ${e}`]});
     }
-    
+   
 }
