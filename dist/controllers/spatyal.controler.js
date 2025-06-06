@@ -25,7 +25,8 @@ const getCapitales = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.getCapitales = getCapitales;
 const getPL = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const cve_loc = req.body.cve_loc;
+    //const cve_loc =req.body.cve_loc;
+    const cve_loc = req.params.cve_loc;
     let query = "SELECT json_build_object(" +
         "'type', 'FeatureCollection', " +
         "'features', json_agg( " +
@@ -49,7 +50,7 @@ const getPL = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (e) {
         console.log(e);
-        return res.status(500).json({ "error": [`NodeJS dice ${e}`] });
+        return res.status(500).json({ "error": ["Error interno en el servidor"] });
     }
 });
 exports.getPL = getPL;

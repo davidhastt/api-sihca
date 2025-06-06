@@ -23,7 +23,10 @@ export const getCapitales= async(req:Request, res:Response): Promise<Response>=>
 
 
 export const getPL= async(req:Request, res:Response): Promise<Response>=>{
-    const cve_loc =req.body.cve_loc;    
+    //const cve_loc =req.body.cve_loc;
+    
+    const cve_loc =req.params.cve_loc;
+
     let query:string=
         "SELECT json_build_object("+
             "'type', 'FeatureCollection', "+
@@ -50,7 +53,7 @@ export const getPL= async(req:Request, res:Response): Promise<Response>=>{
     }
     catch(e){
         console.log(e);
-        return res.status(500).json({"error":[`NodeJS dice ${e}`]});
+        return res.status(500).json({"error":["Error interno en el servidor"]});
     }
    
 }
