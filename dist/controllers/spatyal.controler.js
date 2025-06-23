@@ -9,8 +9,54 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPL = exports.getCapitales = void 0;
+exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = void 0;
 const database_1 = require("../database");
+const getNombresMunByEnt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //console.log(req.params.id);
+    //res.send('recived');
+    try {
+        const cve_agee = req.params.cve_agee;
+        //console.log(cve_agee);
+        const response = yield database_1.pool.query('SELECT id_municipio, cve_agee, nomgeo  FROM public.municipios WHERE cve_agee = $1', [cve_agee]);
+        //console.log(response.rows[0]);
+        if (response.rowCount > 0) {
+            const muns = response.rows;
+            return res.status(200).json({
+                "message": "Persona encontrada",
+                "status": 200,
+                "Respuesta": [muns]
+            });
+        }
+        else {
+            return res.status(200).json({
+                "message": "Persona encontrada",
+                "status": 200,
+                "Respuesta": []
+            });
+        }
+    }
+    catch (_a) {
+        return res.status(500).json({
+            "message": "Error en el servidor",
+            "status": 500
+        });
+    }
+});
+exports.getNombresMunByEnt = getNombresMunByEnt;
+const getNombresEntidades = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //const cve_loc =req.body.cve_loc;
+    let query = 'SELECT id_entidad, cve_agee, nomgeo FROM entidades;';
+    try {
+        const response = yield database_1.pool.query(query);
+        console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ "error": [`NodeJS dice ${e}`] });
+    }
+});
+exports.getNombresEntidades = getNombresEntidades;
 const getCapitales = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let query = 'SELECT cve_agee, nom_agee, capital, pobtot, altitud,  ST_X(geom) AS x, ST_Y(geom) AS y FROM capitales;';
     try {
@@ -26,7 +72,9 @@ const getCapitales = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.getCapitales = getCapitales;
 const getPL = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //const cve_loc =req.body.cve_loc;
-    const cve_loc = req.params.cve_loc;
+    const cve_agee = req.params.cve_agee;
+    console.log(cve_agee);
+    //convertir en geojson
     let query = "SELECT json_build_object(" +
         "'type', 'FeatureCollection', " +
         "'features', json_agg( " +
@@ -42,7 +90,7 @@ const getPL = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         ") " +
         ") AS poligonosLocalidad " +
         "FROM pl " +
-        "WHERE cve_loc ='" + cve_loc + "';";
+        "WHERE cve_agee ='" + cve_agee + "';";
     try {
         const response = yield database_1.pool.query(query);
         console.log(response.rows);

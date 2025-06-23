@@ -1,6 +1,70 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import { pool } from "../database";
+import { Municipio } from "../interfaces/municipio.interface";
+
+
+
+
+export const getNombresMunByEnt=async (req:Request, res:Response): Promise<Response>=>{
+    //console.log(req.params.id);
+    //res.send('recived');
+    try{
+        const cve_agee = req.params.cve_agee;
+        //console.log(cve_agee);
+        const response: QueryResult= await pool.query('SELECT id_municipio, cve_agee, nomgeo  FROM public.municipios WHERE cve_agee = $1', [cve_agee]);
+        //console.log(response.rows[0]);
+
+        if (response.rowCount > 0){
+
+            const muns: Municipio[] = response.rows;            
+            return res.status(200).json({
+                "message":"Persona encontrada",
+                "status":200,
+                "Respuesta": [muns]
+            });             
+        }
+        else{
+            return res.status(200).json({
+                "message":"Persona encontrada",
+                "status":200,
+                "Respuesta": []
+            }); 
+        }
+    }
+    catch{
+        return res.status(500).json({
+            "message":"Error en el servidor",
+            "status":500
+        });
+    }
+}
+
+
+
+
+
+
+export const getNombresEntidades= async(req:Request, res:Response): Promise<Response>=>{
+    //const cve_loc =req.body.cve_loc;
+
+
+    let query:string ='SELECT id_entidad, cve_agee, nomgeo FROM entidades;'
+
+    try{
+        const response: QueryResult= await pool.query(query);
+        console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch(e){
+        console.log(e);
+        return res.status(500).json({"error":[`NodeJS dice ${e}`]});
+    }
+   
+}
+
+
+
 
 
 
@@ -25,8 +89,11 @@ export const getCapitales= async(req:Request, res:Response): Promise<Response>=>
 export const getPL= async(req:Request, res:Response): Promise<Response>=>{
     //const cve_loc =req.body.cve_loc;
     
-    const cve_loc =req.params.cve_loc;
+    const cve_agee =req.params.cve_agee;
 
+    console.log(cve_agee);
+
+    //convertir en geojson
     let query:string=
         "SELECT json_build_object("+
             "'type', 'FeatureCollection', "+
@@ -43,7 +110,7 @@ export const getPL= async(req:Request, res:Response): Promise<Response>=>{
             ") "+
         ") AS poligonosLocalidad "+
         "FROM pl "+
-        "WHERE cve_loc ='"+cve_loc+"';";
+        "WHERE cve_agee ='"+cve_agee+"';";
 
 
     try{
