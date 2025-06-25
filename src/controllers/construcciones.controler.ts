@@ -4,6 +4,44 @@ import { pool } from "../database";
 import { Construccion } from "../interfaces/construcciones.interface";
 
 
+export const getCortesByAGEE=async (req:Request, res:Response): Promise<Response>=>{
+        //console.log(req.body);
+
+    //console.log(req.params.id);
+    //res.send('recived');
+    
+    try{
+        const cve_agee = parseInt(req.params.cve_agee);
+        //const response: QueryResult= await pool.query('SELECT public.construcciones.cve_agee, public.construcciones.id_construccion, public.construcciones.concepto, public.nombres_edificios.nombre, ARRAY[ST_X(public.construcciones.geom), ST_Y(public.construcciones.geom)] AS coordinates FROM public.construcciones INNER JOIN public.nombres_edificios ON public.construcciones.id_construccion = public.nombres_edificios.id_construccion WHERE public.construcciones.cve_agee = $1 ORDER BY id_construccion ASC;', [cve_agee]);
+        const response: QueryResult= await pool.query('SELECT DISTINCT cortes.año as cortes, entidades.cve_agee FROM public.construcciones INNER JOIN cortes ON construcciones.id_construccion = cortes.id_construccion INNER JOIN entidades ON  construcciones.cve_agee=entidades.cve_agee WHERE entidades.cve_agee = $1', [cve_agee]);
+
+        //console.log(response.rows[0]);
+
+        if (response.rowCount > 0){
+            const cortes=response.rows;
+            return res.status(200).json({
+                "message":"Cortes encontrados exitosamente",
+                "status":200,
+                "Respuesta": cortes
+            });             
+        }
+        else{
+            return res.status(200).json({
+                "message":"No hay informacion para esta entidad",
+                "status":200,
+                "Respuesta": []
+            }); 
+        }
+    }
+    catch{
+        return res.status(500).json({
+            "message":"Error en el servidor",
+            "status":500
+        });
+    }
+}
+
+
 
 export const getConstruccionesByAGEE=async (req:Request, res:Response): Promise<Response>=>{
     //console.log(req.params.id);

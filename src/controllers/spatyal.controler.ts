@@ -4,6 +4,48 @@ import { pool } from "../database";
 import { Municipio } from "../interfaces/municipio.interface";
 
 
+export const getCapital= async(req:Request, res:Response): Promise<Response>=>{
+    //const cve_loc =req.body.cve_loc;
+    
+    const cve_agee =req.params.cve_agee;
+
+    console.log(cve_agee);
+
+    //convertir en geojson
+    let query:string=
+        "SELECT json_build_object("+
+                "'type', 'FeatureCollection',"+
+                "'features', json_agg("+
+                    "json_build_object("+
+                    "'type', 'Feature',"+
+                    "'geometry', ST_AsGeoJSON(geom)::json,"+
+                    "'properties', json_build_object("+
+                        "'cve_agee', cve_agee,"+
+                        "'nom_agee', nom_agee,"+
+                        "'capital', capital"+                        
+                    ")"+
+                    ")"+
+                ")"+
+                ") AS geojson "+
+                "FROM "+
+                "capitales "+
+                "WHERE cve_agee ='"+cve_agee+"'";
+    //console.log(query);
+
+    try{
+        const response: QueryResult= await pool.query(query);
+        //console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch(e){
+        console.log(e);
+        return res.status(500).json({"error":["Error interno en el servidor"]});
+    }
+   
+}
+
+
+
 export const getMunicipioPolygon= async(req:Request, res:Response): Promise<Response>=>{
     //const cve_loc =req.body.cve_loc;
     
@@ -153,7 +195,7 @@ export const getNombresEntidades= async(req:Request, res:Response): Promise<Resp
 
 export const getCapitales= async(req:Request, res:Response): Promise<Response>=>{
 
-    let query:string ='SELECT cve_agee, nom_agee, capital, pobtot, altitud,  ST_X(geom) AS x, ST_Y(geom) AS y FROM capitales;'
+    let query:string ='SELECT cve_agee, nom_agee, capital, pobtot, altitud,  ST_X(geom) AS x, ST_Y(geom) AS y FROM capitales ORDER BY capital;';
 
     try{
         const response: QueryResult= await pool.query(query);
