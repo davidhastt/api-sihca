@@ -4,6 +4,47 @@ import { pool } from "../database";
 import { Municipio } from "../interfaces/municipio.interface";
 
 
+export const getPLbyEntAndCut= async(req:Request, res:Response): Promise<Response>=>{
+    //const cve_loc =req.body.cve_loc;
+    
+    const cve_agee =req.params.cve_agee;
+    const cut =req.params.cut;
+
+    //console.log(cve_agee);
+    //convertir en geojson
+    let query:string=
+        "SELECT json_build_object("+
+                "'type', 'FeatureCollection',"+
+                "'features', json_agg("+
+                    "json_build_object("+
+                    "'type', 'Feature',"+
+                    "'geometry', ST_AsGeoJSON(geom)::json,"+
+                    "'properties', json_build_object("+
+                        "'cve_agee', cve_agee,"+
+                        "'anio', anio"+
+                    ")"+
+                    ")"+
+                ")"+
+                ") AS geojson "+
+                "FROM "+
+                "pl "+
+                "WHERE "+ 
+                "anio < 2000 AND cve_agee ='15'";
+    //console.log(query);
+
+    try{
+        const response: QueryResult= await pool.query(query);
+        //console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch(e){
+        console.log(e);
+        return res.status(500).json({"error":["Error interno en el servidor"]});
+    }
+  
+}
+
+
 export const getCapital= async(req:Request, res:Response): Promise<Response>=>{
     //const cve_loc =req.body.cve_loc;
     

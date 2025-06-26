@@ -11,4 +11,5 @@ router.get('/spatyal/getNombresMunByEnt/:cve_agee', spatyal_controler_1.getNombr
 router.get('/spatyal/getEntidadPolygon/:cve_agee', spatyal_controler_1.getEntidadPolygon);
 router.get('/spatyal/getMunicipioPolygon/:cvegeo', spatyal_controler_1.getMunicipioPolygon);
 router.get('/spatyal/getCapital/:cve_agee', spatyal_controler_1.getCapital);
+router.get('/spatyal/getPLbyEntAndCut/:cve_agee/:cut', spatyal_controler_1.getPLbyEntAndCut);
 exports.default = router;
