@@ -1,7 +1,7 @@
 import {Router} from 'express';
 const router = Router();
 
-import {getCapitales, getPL, getNombresEntidades, getNombresMunByEnt, getEntidadPolygon, getMunicipioPolygon, getCapital, getPLbyEntAndCut} from "../controllers/spatyal.controler";
+import {getCapitales, getPL, getNombresEntidades, getNombresMunByEnt, getEntidadPolygon, getMunicipioPolygon, getCapital, getPLbyEntAndCut, getRiosByEnt, getCLbyEnt} from "../controllers/spatyal.controler";
 //inicio
 router.get('/spatyal/getCapitales', getCapitales);
 router.get('/spatyal/getpl/:cve_agee', getPL);
@@ -11,6 +11,8 @@ router.get('/spatyal/getEntidadPolygon/:cve_agee', getEntidadPolygon);
 router.get('/spatyal/getMunicipioPolygon/:cvegeo', getMunicipioPolygon);
 router.get('/spatyal/getCapital/:cve_agee', getCapital);
 router.get('/spatyal/getPLbyEntAndCut/:cve_agee/:cut', getPLbyEntAndCut);
+router.get('/spatyal/getRiosByEnt/:cve_agee', getRiosByEnt);
+router.get('/spatyal/getCLbyEnt/:cve_agee', getCLbyEnt);
 
 
 export default router;

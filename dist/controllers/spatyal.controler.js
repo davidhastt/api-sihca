@@ -9,8 +9,77 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = void 0;
+exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = void 0;
 const database_1 = require("../database");
+const getCLbyEnt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //const cve_loc =req.body.cve_loc;
+    const cve_agee = req.params.cve_agee;
+    const cut = req.params.cut;
+    //console.log(cve_agee);
+    //convertir en geojson
+    let query = "SELECT json_build_object(" +
+        "'type', 'FeatureCollection'," +
+        "'features', json_agg(" +
+        "json_build_object(" +
+        "'type', 'Feature'," +
+        "'geometry', ST_AsGeoJSON(geom)::json," +
+        "'properties', json_build_object(" +
+        "'altura', altura" +
+        ")" +
+        ")" +
+        ")" +
+        ") AS geojson " +
+        "FROM " +
+        "curvas " +
+        "WHERE " +
+        "cve_agee ='" + cve_agee + "'";
+    //console.log(query);
+    try {
+        const response = yield database_1.pool.query(query);
+        //console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ "error": ["Error interno en el servidor"] });
+    }
+});
+exports.getCLbyEnt = getCLbyEnt;
+const getRiosByEnt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //const cve_loc =req.body.cve_loc;
+    const cve_agee = req.params.cve_agee;
+    const cut = req.params.cut;
+    //console.log(cve_agee);
+    //convertir en geojson
+    let query = "SELECT json_build_object(" +
+        "'type', 'FeatureCollection'," +
+        "'features', json_agg(" +
+        "json_build_object(" +
+        "'type', 'Feature'," +
+        "'geometry', ST_AsGeoJSON(geom)::json," +
+        "'properties', json_build_object(" +
+        "'cve_agee', cve_agee," +
+        "'descripcion', descripcion" +
+        ")" +
+        ")" +
+        ")" +
+        ") AS geojson " +
+        "FROM " +
+        "rios " +
+        "WHERE " +
+        "cve_agee ='15'";
+    //console.log(query);
+    try {
+        const response = yield database_1.pool.query(query);
+        //console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ "error": ["Error interno en el servidor"] });
+    }
+});
+exports.getRiosByEnt = getRiosByEnt;
 const getPLbyEntAndCut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //const cve_loc =req.body.cve_loc;
     const cve_agee = req.params.cve_agee;
@@ -33,7 +102,7 @@ const getPLbyEntAndCut = (req, res) => __awaiter(void 0, void 0, void 0, functio
         "FROM " +
         "pl " +
         "WHERE " +
-        "anio < 2000 AND cve_agee ='15'";
+        "anio < " + cut + " AND cve_agee ='" + cve_agee + "'";
     //console.log(query);
     try {
         const response = yield database_1.pool.query(query);
