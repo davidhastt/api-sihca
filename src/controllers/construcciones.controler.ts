@@ -13,7 +13,8 @@ export const getCortesByAGEE=async (req:Request, res:Response): Promise<Response
     try{
         const cve_agee = parseInt(req.params.cve_agee);
         //const response: QueryResult= await pool.query('SELECT public.construcciones.cve_agee, public.construcciones.id_construccion, public.construcciones.concepto, public.nombres_edificios.nombre, ARRAY[ST_X(public.construcciones.geom), ST_Y(public.construcciones.geom)] AS coordinates FROM public.construcciones INNER JOIN public.nombres_edificios ON public.construcciones.id_construccion = public.nombres_edificios.id_construccion WHERE public.construcciones.cve_agee = $1 ORDER BY id_construccion ASC;', [cve_agee]);
-        const response: QueryResult= await pool.query('SELECT DISTINCT cortes.año as cortes, entidades.cve_agee FROM public.construcciones INNER JOIN cortes ON construcciones.id_construccion = cortes.id_construccion INNER JOIN entidades ON  construcciones.cve_agee=entidades.cve_agee WHERE entidades.cve_agee = $1', [cve_agee]);
+        const response: QueryResult= await pool.query('SELECT * FROM public.anios WHERE id_capital =$1 ORDER BY anio ASC;', [cve_agee])
+
 
         //console.log(response.rows[0]);
 

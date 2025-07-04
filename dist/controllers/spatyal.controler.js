@@ -12,9 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = void 0;
 const database_1 = require("../database");
 const getCLbyEnt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //const cve_loc =req.body.cve_loc;
     const cve_agee = req.params.cve_agee;
-    const cut = req.params.cut;
     //console.log(cve_agee);
     //convertir en geojson
     let query = "SELECT json_build_object(" +
@@ -118,7 +116,7 @@ exports.getPLbyEntAndCut = getPLbyEntAndCut;
 const getCapital = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //const cve_loc =req.body.cve_loc;
     const cve_agee = req.params.cve_agee;
-    console.log(cve_agee);
+    //console.log(cve_agee);
     //convertir en geojson
     let query = "SELECT json_build_object(" +
         "'type', 'FeatureCollection'," +
@@ -269,7 +267,7 @@ const getCapitales = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     let query = 'SELECT cve_agee, nom_agee, capital, pobtot, altitud,  ST_X(geom) AS x, ST_Y(geom) AS y FROM capitales ORDER BY capital;';
     try {
         const response = yield database_1.pool.query(query);
-        console.log(response.rows);
+        //console.log(response.rows);
         return res.status(200).json(response.rows);
     }
     catch (e) {
@@ -281,7 +279,7 @@ exports.getCapitales = getCapitales;
 const getPL = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //const cve_loc =req.body.cve_loc;
     const cve_agee = req.params.cve_agee;
-    console.log(cve_agee);
+    //console.log(cve_agee);
     //convertir en geojson
     let query = "SELECT json_build_object(" +
         "'type', 'FeatureCollection', " +
@@ -301,7 +299,7 @@ const getPL = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         "WHERE cve_agee ='" + cve_agee + "';";
     try {
         const response = yield database_1.pool.query(query);
-        console.log(response.rows);
+        //console.log(response.rows);
         return res.status(200).json(response.rows);
     }
     catch (e) {

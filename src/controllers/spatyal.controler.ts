@@ -4,10 +4,8 @@ import { pool } from "../database";
 import { Municipio } from "../interfaces/municipio.interface";
 
 export const getCLbyEnt= async(req:Request, res:Response): Promise<Response>=>{
-    //const cve_loc =req.body.cve_loc;
     
-    const cve_agee =req.params.cve_agee;
-    const cut =req.params.cut;
+    const cve_agee =req.params.cve_agee;    
 
     //console.log(cve_agee);
     //convertir en geojson
@@ -131,7 +129,7 @@ export const getCapital= async(req:Request, res:Response): Promise<Response>=>{
     
     const cve_agee =req.params.cve_agee;
 
-    console.log(cve_agee);
+    //console.log(cve_agee);
 
     //convertir en geojson
     let query:string=
@@ -321,7 +319,7 @@ export const getCapitales= async(req:Request, res:Response): Promise<Response>=>
 
     try{
         const response: QueryResult= await pool.query(query);
-        console.log(response.rows);
+        //console.log(response.rows);
         return res.status(200).json(response.rows);
     }
     catch(e){
@@ -338,7 +336,7 @@ export const getPL= async(req:Request, res:Response): Promise<Response>=>{
     
     const cve_agee =req.params.cve_agee;
 
-    console.log(cve_agee);
+    //console.log(cve_agee);
 
     //convertir en geojson
     let query:string=
@@ -362,7 +360,7 @@ export const getPL= async(req:Request, res:Response): Promise<Response>=>{
 
     try{
         const response: QueryResult= await pool.query(query);
-        console.log(response.rows);
+        //console.log(response.rows);
         return res.status(200).json(response.rows);
     }
     catch(e){

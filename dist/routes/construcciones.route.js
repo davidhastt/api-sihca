@@ -9,5 +9,5 @@ router.get('/construcciones', construcciones_controler_1.construccionesInfo);
 router.get('/construcciones/all', construcciones_controler_1.getConstrucciones);
 router.post('/construcciones/nueva', auth_middlewares_1.authMiddleware, construcciones_controler_1.nueva);
 router.get('/construcciones/:cve_agee', construcciones_controler_1.getConstruccionesByAGEE);
-router.get('/construcciones/cortes/:cve_agee', construcciones_controler_1.getCortesByAGEE);
+router.get('/construcciones/getCortesByAGEE/:cve_agee', construcciones_controler_1.getCortesByAGEE);
 exports.default = router;

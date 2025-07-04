@@ -8,7 +8,7 @@ router.get('/construcciones', construccionesInfo);
 router.get('/construcciones/all', getConstrucciones);
 router.post('/construcciones/nueva', authMiddleware, nueva);
 router.get('/construcciones/:cve_agee', getConstruccionesByAGEE);
-router.get('/construcciones/cortes/:cve_agee', getCortesByAGEE);
+router.get('/construcciones/getCortesByAGEE/:cve_agee', getCortesByAGEE);
 
 
 
