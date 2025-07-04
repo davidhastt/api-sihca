@@ -9,8 +9,78 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = void 0;
+exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = exports.GetManzanasByEntAndCut = exports.GetVialidadesByEntAndCut = void 0;
 const database_1 = require("../database");
+const GetVialidadesByEntAndCut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //const cve_loc =req.body.cve_loc;
+    const id_anio = req.params.id_anio;
+    const id_capital = req.params.id_capital;
+    //console.log(id_anio, id_capital);
+    //convertir en geojson
+    let query = "SELECT json_build_object(" +
+        "'type', 'FeatureCollection'," +
+        "'features', json_agg(" +
+        "json_build_object(" +
+        "'type', 'Feature'," +
+        "'geometry', ST_AsGeoJSON(geom)::json," +
+        "'properties', json_build_object(" +
+        "'id_capital', id_capital," +
+        "'id_anio', id_anio" +
+        ")" +
+        ")" +
+        ")" +
+        ") AS geojson " +
+        "FROM " +
+        "vialidades " +
+        "WHERE " +
+        "id_anio = " + id_anio + " AND id_capital =" + id_capital + ";";
+    //console.log(query);
+    try {
+        const response = yield database_1.pool.query(query);
+        //console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ "error": ["Error interno en el servidor"] });
+    }
+});
+exports.GetVialidadesByEntAndCut = GetVialidadesByEntAndCut;
+const GetManzanasByEntAndCut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //const cve_loc =req.body.cve_loc;
+    const id_anio = req.params.id_anio;
+    const id_capital = req.params.id_capital;
+    //console.log(id_anio, id_capital);
+    //convertir en geojson
+    let query = "SELECT json_build_object(" +
+        "'type', 'FeatureCollection'," +
+        "'features', json_agg(" +
+        "json_build_object(" +
+        "'type', 'Feature'," +
+        "'geometry', ST_AsGeoJSON(geom)::json," +
+        "'properties', json_build_object(" +
+        "'id_capital', id_capital," +
+        "'id_anio', id_anio" +
+        ")" +
+        ")" +
+        ")" +
+        ") AS geojson " +
+        "FROM " +
+        "manzanas " +
+        "WHERE " +
+        "id_anio = " + id_anio + " AND id_capital =" + id_capital + ";";
+    //console.log(query);
+    try {
+        const response = yield database_1.pool.query(query);
+        //console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ "error": ["Error interno en el servidor"] });
+    }
+});
+exports.GetManzanasByEntAndCut = GetManzanasByEntAndCut;
 const getCLbyEnt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const cve_agee = req.params.cve_agee;
     //console.log(cve_agee);
@@ -80,9 +150,9 @@ const getRiosByEnt = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.getRiosByEnt = getRiosByEnt;
 const getPLbyEntAndCut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //const cve_loc =req.body.cve_loc;
-    const cve_agee = req.params.cve_agee;
-    const cut = req.params.cut;
-    //console.log(cve_agee);
+    const id_anio = req.params.id_anio;
+    const id_capital = req.params.id_capital;
+    //console.log(id_anio, id_capital);
     //convertir en geojson
     let query = "SELECT json_build_object(" +
         "'type', 'FeatureCollection'," +
@@ -91,8 +161,8 @@ const getPLbyEntAndCut = (req, res) => __awaiter(void 0, void 0, void 0, functio
         "'type', 'Feature'," +
         "'geometry', ST_AsGeoJSON(geom)::json," +
         "'properties', json_build_object(" +
-        "'cve_agee', cve_agee," +
-        "'anio', anio" +
+        "'id_capital', id_capital," +
+        "'id_anio', id_anio" +
         ")" +
         ")" +
         ")" +
@@ -100,7 +170,7 @@ const getPLbyEntAndCut = (req, res) => __awaiter(void 0, void 0, void 0, functio
         "FROM " +
         "pl " +
         "WHERE " +
-        "anio < " + cut + " AND cve_agee ='" + cve_agee + "'";
+        "id_anio = " + id_anio + " AND id_capital =" + id_capital + ";";
     //console.log(query);
     try {
         const response = yield database_1.pool.query(query);

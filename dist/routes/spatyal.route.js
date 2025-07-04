@@ -11,7 +11,9 @@ router.get('/spatyal/getNombresMunByEnt/:cve_agee', spatyal_controler_1.getNombr
 router.get('/spatyal/getEntidadPolygon/:cve_agee', spatyal_controler_1.getEntidadPolygon);
 router.get('/spatyal/getMunicipioPolygon/:cvegeo', spatyal_controler_1.getMunicipioPolygon);
 router.get('/spatyal/getCapital/:cve_agee', spatyal_controler_1.getCapital);
-router.get('/spatyal/getPLbyEntAndCut/:cve_agee/:cut', spatyal_controler_1.getPLbyEntAndCut);
+router.get('/spatyal/getPLbyEntAndCut/:id_capital/:id_anio/', spatyal_controler_1.getPLbyEntAndCut);
 router.get('/spatyal/getRiosByEnt/:cve_agee', spatyal_controler_1.getRiosByEnt);
 router.get('/spatyal/getCLbyEnt/:cve_agee', spatyal_controler_1.getCLbyEnt);
+router.get('/spatyal/GetManzanasByEntAndCut/:id_capital/:id_anio/', spatyal_controler_1.GetManzanasByEntAndCut);
+router.get('/spatyal/GetVialidadesByEntAndCut/:id_capital/:id_anio/', spatyal_controler_1.GetVialidadesByEntAndCut);
 exports.default = router;

@@ -3,6 +3,94 @@ import { QueryResult } from "pg";
 import { pool } from "../database";
 import { Municipio } from "../interfaces/municipio.interface";
 
+
+export const GetVialidadesByEntAndCut= async(req:Request, res:Response): Promise<Response>=>{
+    //const cve_loc =req.body.cve_loc;
+    
+	const id_anio =req.params.id_anio;
+    const id_capital =req.params.id_capital;
+    
+
+    //console.log(id_anio, id_capital);
+    //convertir en geojson
+	let query:string=
+	"SELECT json_build_object("+
+		"'type', 'FeatureCollection',"+
+		"'features', json_agg("+
+			"json_build_object("+
+			"'type', 'Feature',"+
+			"'geometry', ST_AsGeoJSON(geom)::json,"+
+			"'properties', json_build_object("+
+				"'id_capital', id_capital,"+
+				"'id_anio', id_anio"+
+			")"+
+			")"+
+		")"+
+		") AS geojson "+
+		"FROM "+
+		"vialidades "+
+		"WHERE "+
+		"id_anio = "+id_anio+" AND id_capital ="+id_capital+";";
+
+    //console.log(query);
+	
+    try{
+        const response: QueryResult= await pool.query(query);
+        //console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch(e){
+        console.log(e);
+        return res.status(500).json({"error":["Error interno en el servidor"]});
+    }
+  
+}
+
+
+
+export const GetManzanasByEntAndCut= async(req:Request, res:Response): Promise<Response>=>{
+    //const cve_loc =req.body.cve_loc;
+    
+	const id_anio =req.params.id_anio;
+    const id_capital =req.params.id_capital;
+    
+
+    //console.log(id_anio, id_capital);
+    //convertir en geojson
+	let query:string=
+	"SELECT json_build_object("+
+		"'type', 'FeatureCollection',"+
+		"'features', json_agg("+
+			"json_build_object("+
+			"'type', 'Feature',"+
+			"'geometry', ST_AsGeoJSON(geom)::json,"+
+			"'properties', json_build_object("+
+				"'id_capital', id_capital,"+
+				"'id_anio', id_anio"+
+			")"+
+			")"+
+		")"+
+		") AS geojson "+
+		"FROM "+
+		"manzanas "+
+		"WHERE "+
+		"id_anio = "+id_anio+" AND id_capital ="+id_capital+";";
+
+    //console.log(query);
+	
+    try{
+        const response: QueryResult= await pool.query(query);
+        //console.log(response.rows);
+        return res.status(200).json(response.rows);
+    }
+    catch(e){
+        console.log(e);
+        return res.status(500).json({"error":["Error interno en el servidor"]});
+    }
+  
+}
+
+
 export const getCLbyEnt= async(req:Request, res:Response): Promise<Response>=>{
     
     const cve_agee =req.params.cve_agee;    
@@ -86,31 +174,33 @@ export const getRiosByEnt= async(req:Request, res:Response): Promise<Response>=>
 export const getPLbyEntAndCut= async(req:Request, res:Response): Promise<Response>=>{
     //const cve_loc =req.body.cve_loc;
     
-    const cve_agee =req.params.cve_agee;
-    const cut =req.params.cut;
+	const id_anio =req.params.id_anio;
+    const id_capital =req.params.id_capital;
+    
 
-    //console.log(cve_agee);
+    //console.log(id_anio, id_capital);
     //convertir en geojson
-    let query:string=
-        "SELECT json_build_object("+
-                "'type', 'FeatureCollection',"+
-                "'features', json_agg("+
-                    "json_build_object("+
-                    "'type', 'Feature',"+
-                    "'geometry', ST_AsGeoJSON(geom)::json,"+
-                    "'properties', json_build_object("+
-                        "'cve_agee', cve_agee,"+
-                        "'anio', anio"+
-                    ")"+
-                    ")"+
-                ")"+
-                ") AS geojson "+
-                "FROM "+
-                "pl "+
-                "WHERE "+ 
-                "anio < "+cut+" AND cve_agee ='"+cve_agee+"'";
-    //console.log(query);
+	let query:string=
+	"SELECT json_build_object("+
+		"'type', 'FeatureCollection',"+
+		"'features', json_agg("+
+			"json_build_object("+
+			"'type', 'Feature',"+
+			"'geometry', ST_AsGeoJSON(geom)::json,"+
+			"'properties', json_build_object("+
+				"'id_capital', id_capital,"+
+				"'id_anio', id_anio"+
+			")"+
+			")"+
+		")"+
+		") AS geojson "+
+		"FROM "+
+		"pl "+
+		"WHERE "+
+		"id_anio = "+id_anio+" AND id_capital ="+id_capital+";";
 
+    //console.log(query);
+	
     try{
         const response: QueryResult= await pool.query(query);
         //console.log(response.rows);
