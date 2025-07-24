@@ -12,7 +12,6 @@ export const getConceptosCutAndEnt=async (req:Request, res:Response): Promise<Re
         const id_capital = req.params.id_capital;
         //console.log(cve_agee);
         const response: QueryResult= await pool.query(
-
             'SELECT DISTINCT conceptos.id_concepto, conceptos.nom_concepto FROM direcciones LEFT JOIN rasgos ON direcciones.id_rasgo = rasgos.id_rasgo '+
             'LEFT JOIN conceptos ON rasgos.id_concepto = conceptos.id_concepto WHERE direcciones.id_anio = $1 AND rasgos.id_capital=$2 '+
             'ORDER BY conceptos.id_concepto;', [id_anio, id_capital]);
