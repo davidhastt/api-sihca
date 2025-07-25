@@ -16,6 +16,7 @@ router.get('/spatyal/getRiosByEnt/:cve_agee', spatyal_controler_1.getRiosByEnt);
 router.get('/spatyal/getCLbyEnt/:cve_agee', spatyal_controler_1.getCLbyEnt);
 router.get('/spatyal/GetManzanasByEntAndCut/:id_capital/:id_anio/', spatyal_controler_1.GetManzanasByEntAndCut);
 router.get('/spatyal/GetVialidadesByEntAndCut/:id_capital/:id_anio/', spatyal_controler_1.GetVialidadesByEntAndCut);
-router.get('/spatyal/GetRasgosByEntAndCut/:id_capital/:id_anio/', spatyal_controler_1.GetRasgosByEntAndCut);
+router.get('/spatyal/GetRasgosByEntAndCut/:id_capital/:id_anio/:id_concepto', spatyal_controler_1.GetRasgosByEntAndCut);
 router.get('/spatyal/getConceptosCutAndEnt/:id_capital/:id_anio/', spatyal_controler_1.getConceptosCutAndEnt);
+router.get('/spatyal/getAcontecimientosByRasgo/:id_rasgo/', spatyal_controler_1.getAcontecimientosByRasgo);
 exports.default = router;

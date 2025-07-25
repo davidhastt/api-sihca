@@ -9,8 +9,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = exports.GetManzanasByEntAndCut = exports.GetVialidadesByEntAndCut = exports.GetRasgosByEntAndCut = exports.getConceptosCutAndEnt = void 0;
+exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = exports.GetManzanasByEntAndCut = exports.GetVialidadesByEntAndCut = exports.GetRasgosByEntAndCut = exports.getConceptosCutAndEnt = exports.getAcontecimientosByRasgo = void 0;
 const database_1 = require("../database");
+const getAcontecimientosByRasgo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //console.log(req.params.id);
+    //res.send('recived');
+    try {
+        const id_rasgo = req.params.id_rasgo;
+        //console.log(cve_agee);
+        const response = yield database_1.pool.query(`SELECT id_acontecimiento, id_rasgo, fecha, acontecimiento FROM public.acontecimientos WHERE id_rasgo=$1;`, [id_rasgo]);
+        if (response.rowCount > 0) {
+            const aconts = response.rows;
+            return res.status(200).json({
+                "message": "Acontecimientos encontrados",
+                "status": 200,
+                "Respuesta": aconts
+            });
+        }
+        else {
+            return res.status(200).json({
+                "message": "Rasgo no encontrado",
+                "status": 200,
+                "Respuesta": []
+            });
+        }
+    }
+    catch (_a) {
+        return res.status(500).json({
+            "message": "Error en el servidor",
+            "status": 500
+        });
+    }
+});
+exports.getAcontecimientosByRasgo = getAcontecimientosByRasgo;
 const getConceptosCutAndEnt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //console.log(req.params.id);
     //res.send('recived');
@@ -39,7 +70,7 @@ const getConceptosCutAndEnt = (req, res) => __awaiter(void 0, void 0, void 0, fu
             });
         }
     }
-    catch (_a) {
+    catch (_b) {
         return res.status(500).json({
             "message": "Error en el servidor",
             "status": 500
@@ -49,39 +80,34 @@ const getConceptosCutAndEnt = (req, res) => __awaiter(void 0, void 0, void 0, fu
 exports.getConceptosCutAndEnt = getConceptosCutAndEnt;
 const GetRasgosByEntAndCut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //const cve_loc =req.body.cve_loc;
-    const id_anio = req.params.id_anio;
     const id_capital = req.params.id_capital;
+    const id_anio = req.params.id_anio;
+    const id_concepto = req.params.id_concepto;
     //console.log(id_anio, id_capital);
     //convertir en geojson		
     let query = `SELECT json_build_object(
-        'type', 'FeatureCollection',
-        'features', json_agg(
-            json_build_object(
-            'type', 'Feature',
-            'geometry', ST_AsGeoJSON(direcciones.geom)::json,
-            'properties', json_build_object(            
-                'id_rasgo', nombres_rasgos.id_rasgo,
-                'id_concepto', rasgos.id_concepto,
-                'id_anio', nombres_rasgos.id_anio,
-                'nom_rasgo', nombres_rasgos.nombre, 
-                'nom_concepto', conceptos.nom_concepto,
-                'id_anio', anios.id_anio,
-                'anio', anios.anio,
-                'id_direccion', direcciones.id_direccion,
-                'direccion', direcciones.direccion		
+            'type', 'FeatureCollection',
+            'features', json_agg(
+                json_build_object(
+                'type', 'Feature',
+                'geometry', ST_AsGeoJSON(direcciones.geom)::json,
+                'properties', json_build_object(            
+                    'id_rasgo', nombres_rasgos.id_rasgo,
+                    'id_concepto', rasgos.id_concepto,
+                    'nom_concepto', conceptos.nom_concepto,
+                    'nom_rasgo', nombres_rasgos.nombre, 
+                    'direccion', direcciones.direccion	
+                )
+                )
             )
-            )
-        )
-        ) AS geojson 
-        FROM 
-        nombres_rasgos 
-        LEFT JOIN rasgos ON nombres_rasgos.id_rasgo = rasgos.id_rasgo 
-        LEFT JOIN anios ON nombres_rasgos.id_anio = anios.id_anio 
-        LEFT JOIN conceptos ON rasgos.id_concepto = conceptos.id_concepto 
-        LEFT JOIN direcciones ON nombres_rasgos.id_rasgo = direcciones.id_rasgo 
-        WHERE 
-        nombres_rasgos.id_anio=${id_anio} AND rasgos.id_capital=${id_capital};		
-    `;
+            ) AS geojson 
+            FROM 
+            conceptos 
+            LEFT JOIN rasgos ON conceptos.id_concepto = rasgos.id_concepto
+            LEFT JOIN nombres_rasgos ON rasgos.id_rasgo = nombres_rasgos.id_rasgo
+            LEFT JOIN direcciones ON rasgos.id_rasgo = direcciones.id_rasgo
+            WHERE 
+            conceptos.id_concepto=${id_concepto} AND rasgos.id_capital=${id_capital} AND nombres_rasgos.id_anio = ${id_anio} AND direcciones.id_anio = ${id_anio};`;
     try {
         const response = yield database_1.pool.query(query);
         //console.log(response.rows);
@@ -393,7 +419,7 @@ const getNombresMunByEnt = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
         }
     }
-    catch (_b) {
+    catch (_c) {
         return res.status(500).json({
             "message": "Error en el servidor",
             "status": 500
