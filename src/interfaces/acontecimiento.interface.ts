@@ -1,6 +1,6 @@
 export interface Acontecimiento {
-    id_acontecimiento?: number;
-    id_rasgo: string;
+    id_acontecimiento: number;
+    id_rasgo?: number;
     fecha: string;
     acontecimiento: string;
 }

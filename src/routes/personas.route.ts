@@ -9,7 +9,7 @@ router.post('/personas/crear', createUser);
 router.get('/personas/all', authMiddleware,  getUsers);
 router.get('/personas/:id_persona', authMiddleware, getUserById); 
 router.delete('/personas/:id_persona', authMiddleware, deleteUser); 
-router.put('/personas/:id_persona', authMiddleware, updateUser)
+router.put('/personas/:id_persona', authMiddleware, updateUser);
 router.post('/personas/login', login)
 
 export default router;

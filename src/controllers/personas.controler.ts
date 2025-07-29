@@ -7,6 +7,7 @@ import { Persona } from "../interfaces/persona.interface";
 //import Persona from "../interfaces/persona.interface"
 //no olvides ponerles try, catch
 
+
 export const login= async (req:Request, res:Response): Promise<Response>=>{
     
     const { correo, password } = req.body; 

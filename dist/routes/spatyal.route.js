@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const router = (0, express_1.Router)();
 const spatyal_controler_1 = require("../controllers/spatyal.controler");
+const auth_middlewares_1 = require("../middlewares/auth.middlewares");
 //inicio
 router.get('/spatyal/getCapitales', spatyal_controler_1.getCapitales);
 router.get('/spatyal/getpl/:cve_agee', spatyal_controler_1.getPL);
@@ -19,4 +20,8 @@ router.get('/spatyal/GetVialidadesByEntAndCut/:id_capital/:id_anio/', spatyal_co
 router.get('/spatyal/GetRasgosByEntAndCut/:id_capital/:id_anio/:id_concepto', spatyal_controler_1.GetRasgosByEntAndCut);
 router.get('/spatyal/getConceptosCutAndEnt/:id_capital/:id_anio/', spatyal_controler_1.getConceptosCutAndEnt);
 router.get('/spatyal/getAcontecimientosByRasgo/:id_rasgo/', spatyal_controler_1.getAcontecimientosByRasgo);
+router.put('/spatyal/updateAcontecimiento/:id_acontecimiento', auth_middlewares_1.authMiddleware, spatyal_controler_1.updateAcontecimiento);
+router.post('/spatyal/insertAcontecimiento', auth_middlewares_1.authMiddleware, spatyal_controler_1.insertAcontecimiento);
+router.get('/spatyal/getAnios/:id_capital', spatyal_controler_1.getAnios);
+router.post('/spatyal/rasgo/crear', auth_middlewares_1.authMiddleware, spatyal_controler_1.insertRasgo);
 exports.default = router;

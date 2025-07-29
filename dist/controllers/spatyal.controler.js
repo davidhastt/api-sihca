@@ -9,15 +9,107 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = exports.GetManzanasByEntAndCut = exports.GetVialidadesByEntAndCut = exports.GetRasgosByEntAndCut = exports.getConceptosCutAndEnt = exports.getAcontecimientosByRasgo = void 0;
+exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = exports.GetManzanasByEntAndCut = exports.GetVialidadesByEntAndCut = exports.GetRasgosByEntAndCut = exports.getConceptosCutAndEnt = exports.getAcontecimientosByRasgo = exports.updateAcontecimiento = exports.insertAcontecimiento = exports.getAnios = exports.insertRasgo = void 0;
 const database_1 = require("../database");
+const insertRasgo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let newRasgo = req.body;
+        let response = yield database_1.pool.query('INSERT INTO public.rasgos(id_persona, id_tema, id_subtema, id_concepto, id_capital) VALUES ($1, $2, $3, $4, $5) RETURNING public.rasgos.id_rasgo;', [newRasgo.id_persona, newRasgo.id_tema, newRasgo.id_subtema, newRasgo.id_concepto, newRasgo.id_capital]);
+        newRasgo.id_rasgo = response.rows[0].id_rasgo; //obtenemos el ultimo id insertado
+        response = yield database_1.pool.query('INSERT INTO public.nombres_rasgos(id_rasgo, nombre, id_anio) VALUES ($1, $2, $3);', [newRasgo.id_rasgo, newRasgo.nombre, newRasgo.id_anio]);
+        response = yield database_1.pool.query('INSERT INTO public.direcciones(id_rasgo, direccion, geom, id_anio) VALUES ($1, $2, ST_GeomFromText($3, 4326), $4);', [newRasgo.id_rasgo, newRasgo.direccion, 'POINT(' + newRasgo.coordinates[0] + ' ' + newRasgo.coordinates[1] + ')', newRasgo.id_anio]);
+        return res.json({
+            message: 'El rasgo se creo satisfactoriamente',
+            body: {
+                acontecimiento: {
+                    newRasgo
+                }
+            }
+        });
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ "error": ["Ocurrió un error en el servidor."] });
+    }
+});
+exports.insertRasgo = insertRasgo;
+const getAnios = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //console.log(req.params.id);
+    //res.send('recived');
+    try {
+        const id_capital = req.params.id_capital;
+        const response = yield database_1.pool.query('SELECT * FROM public.anios WHERE id_capital=$1', [id_capital]);
+        if (response.rowCount > 0) {
+            const anios = response.rows;
+            //const muns: Municipio[] = response.rows;            
+            return res.status(200).json({
+                "message": "Anios encontrados",
+                "status": 200,
+                "Respuesta": anios
+            });
+        }
+        else {
+            return res.status(200).json({
+                "message": "No se encontro ningun año",
+                "status": 200,
+                "Respuesta": []
+            });
+        }
+    }
+    catch (_a) {
+        return res.status(500).json({
+            "message": "Error en el servidor",
+            "status": 500
+        });
+    }
+});
+exports.getAnios = getAnios;
+const insertAcontecimiento = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let newAconte = req.body;
+        const response = yield database_1.pool.query('INSERT INTO public.acontecimientos(id_rasgo, fecha, acontecimiento) VALUES ($1, $2, $3);', [newAconte.id_rasgo, newAconte.fecha, newAconte.acontecimiento]);
+        return res.json({
+            message: 'El acontecimiento se creo satisfactoriamente',
+            body: {
+                acontecimiento: {
+                    newAconte
+                }
+            }
+        });
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ "error": ["Ocurrió un error en el servidor."] });
+    }
+});
+exports.insertAcontecimiento = insertAcontecimiento;
+const updateAcontecimiento = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const aconte = req.body;
+        aconte.id_acontecimiento = parseInt(req.params.id_acontecimiento);
+        yield database_1.pool.query('UPDATE public.acontecimientos	SET  fecha=$1, acontecimiento=$2 WHERE id_acontecimiento=$3', [aconte.fecha, aconte.acontecimiento, aconte.id_acontecimiento]);
+        //console.log(`El acontecimiento con id_acontecimiento =  ${aconte.id_acontecimiento} fue actualizada`);
+        return res.status(200).json({
+            "message": "El acontecimiento fue actualizado",
+            "status": 200
+        });
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            "message": "Error en el servidor",
+            "status": 500
+        });
+    }
+});
+exports.updateAcontecimiento = updateAcontecimiento;
 const getAcontecimientosByRasgo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //console.log(req.params.id);
     //res.send('recived');
     try {
         const id_rasgo = req.params.id_rasgo;
         //console.log(cve_agee);
-        const response = yield database_1.pool.query(`SELECT id_acontecimiento, id_rasgo, fecha, acontecimiento FROM public.acontecimientos WHERE id_rasgo=$1;`, [id_rasgo]);
+        const response = yield database_1.pool.query(`SELECT id_acontecimiento, id_rasgo, fecha, acontecimiento FROM public.acontecimientos WHERE id_rasgo=$1 ORDER BY fecha;`, [id_rasgo]);
         if (response.rowCount > 0) {
             const aconts = response.rows;
             return res.status(200).json({
@@ -34,7 +126,7 @@ const getAcontecimientosByRasgo = (req, res) => __awaiter(void 0, void 0, void 0
             });
         }
     }
-    catch (_a) {
+    catch (_b) {
         return res.status(500).json({
             "message": "Error en el servidor",
             "status": 500
@@ -70,7 +162,7 @@ const getConceptosCutAndEnt = (req, res) => __awaiter(void 0, void 0, void 0, fu
             });
         }
     }
-    catch (_b) {
+    catch (_c) {
         return res.status(500).json({
             "message": "Error en el servidor",
             "status": 500
@@ -419,7 +511,7 @@ const getNombresMunByEnt = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
         }
     }
-    catch (_c) {
+    catch (_d) {
         return res.status(500).json({
             "message": "Error en el servidor",
             "status": 500

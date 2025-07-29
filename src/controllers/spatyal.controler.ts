@@ -4,6 +4,131 @@ import { pool } from "../database";
 import { Municipio } from "../interfaces/municipio.interface";
 import { Concepto } from "../interfaces/concepto.interface";
 import { Acontecimiento } from "../interfaces/acontecimiento.interface";
+import { Anio } from "../interfaces/anios.interface";
+import { Rasgo } from "../interfaces/rasgo.interface";
+
+
+export const insertRasgo=async (req:Request, res:Response): Promise<Response>=>{
+
+    try{               
+        let newRasgo:Rasgo= req.body;        
+
+        let response: QueryResult = await pool.query('INSERT INTO public.rasgos(id_persona, id_tema, id_subtema, id_concepto, id_capital) VALUES ($1, $2, $3, $4, $5) RETURNING public.rasgos.id_rasgo;',[newRasgo.id_persona, newRasgo.id_tema, newRasgo.id_subtema, newRasgo.id_concepto, newRasgo.id_capital]);
+        
+         newRasgo.id_rasgo= response.rows[0].id_rasgo; //obtenemos el ultimo id insertado
+        
+        
+        response = await pool.query('INSERT INTO public.nombres_rasgos(id_rasgo, nombre, id_anio) VALUES ($1, $2, $3);',[newRasgo.id_rasgo, newRasgo.nombre, newRasgo.id_anio]);
+
+
+        response = await pool.query('INSERT INTO public.direcciones(id_rasgo, direccion, geom, id_anio) VALUES ($1, $2, ST_GeomFromText($3, 4326), $4);',[newRasgo.id_rasgo, newRasgo.direccion, 'POINT('+ newRasgo.coordinates[0]+' '+ newRasgo.coordinates[1]+')', newRasgo.id_anio]);
+
+
+
+        return res.json({
+            message: 'El rasgo se creo satisfactoriamente',
+            body:{
+                acontecimiento:{
+                    newRasgo                    
+                }
+            }
+        })
+    }
+    catch(e){
+        console.log(e);    
+        return res.status(500).json({"error": ["Ocurrió un error en el servidor."]});
+    }    
+
+}
+
+
+
+export const getAnios=async (req:Request, res:Response): Promise<Response>=>{// con esta consulta sabemos cuantos conceptos de rasgos existen
+    //console.log(req.params.id);
+    //res.send('recived');
+    try{
+
+        const id_capital=req.params.id_capital;
+
+        const response: QueryResult= await pool.query('SELECT * FROM public.anios WHERE id_capital=$1', [id_capital]);    
+
+        if (response.rowCount > 0){
+
+            const anios: Anio[]= response.rows;
+
+            //const muns: Municipio[] = response.rows;            
+            return res.status(200).json({
+                "message":"Anios encontrados",
+                "status":200,
+                "Respuesta": anios
+            });             
+        }
+        else{
+            return res.status(200).json({
+                "message":"No se encontro ningun año",
+                "status":200,
+                "Respuesta": []
+            }); 
+        }
+            
+    }
+    catch{
+        return res.status(500).json({
+            "message":"Error en el servidor",
+            "status":500
+        });
+    }
+}
+
+
+
+export const insertAcontecimiento=async (req:Request, res:Response): Promise<Response>=>{//falta quitar el password de la respuesta
+
+    try{        
+        let newAconte:Acontecimiento= req.body;        
+        const response: QueryResult = await pool.query('INSERT INTO public.acontecimientos(id_rasgo, fecha, acontecimiento) VALUES ($1, $2, $3);',[newAconte.id_rasgo, newAconte.fecha, newAconte.acontecimiento]);
+        
+        return res.json({
+            message: 'El acontecimiento se creo satisfactoriamente',
+            body:{
+                acontecimiento:{
+                    newAconte                    
+                }
+            }
+        })
+    }
+    catch(e){
+        console.log(e);    
+        return res.status(500).json({"error": ["Ocurrió un error en el servidor."]});
+    }    
+
+}
+
+
+
+
+export const updateAcontecimiento=async (req:Request, res:Response): Promise<Response>=>{
+    try{
+        const aconte:Acontecimiento= req.body;
+        aconte.id_acontecimiento=parseInt(req.params.id_acontecimiento);
+
+        await pool.query('UPDATE public.acontecimientos	SET  fecha=$1, acontecimiento=$2 WHERE id_acontecimiento=$3', [aconte.fecha, aconte.acontecimiento, aconte.id_acontecimiento]);
+
+        //console.log(`El acontecimiento con id_acontecimiento =  ${aconte.id_acontecimiento} fue actualizada`);
+        return res.status(200).json({
+            "message":"El acontecimiento fue actualizado",
+            "status":200
+        });
+            
+        }
+        catch(e){
+            console.log(e);    
+            return res.status(500).json({
+                "message":"Error en el servidor",
+                "status":500
+            });
+        }
+}
 
 
 export const getAcontecimientosByRasgo=async (req:Request, res:Response): Promise<Response>=>{// con esta consulta sabemos cuantos conceptos de rasgos existen
@@ -13,7 +138,7 @@ export const getAcontecimientosByRasgo=async (req:Request, res:Response): Promis
         const id_rasgo = req.params.id_rasgo;
         
         //console.log(cve_agee);
-        const response: QueryResult= await pool.query(`SELECT id_acontecimiento, id_rasgo, fecha, acontecimiento FROM public.acontecimientos WHERE id_rasgo=$1;`, [id_rasgo]);
+        const response: QueryResult= await pool.query(`SELECT id_acontecimiento, id_rasgo, fecha, acontecimiento FROM public.acontecimientos WHERE id_rasgo=$1 ORDER BY fecha;`, [id_rasgo]);
 
 
         if (response.rowCount > 0){
