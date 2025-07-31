@@ -24,4 +24,5 @@ router.put('/spatyal/updateAcontecimiento/:id_acontecimiento', auth_middlewares_
 router.post('/spatyal/insertAcontecimiento', auth_middlewares_1.authMiddleware, spatyal_controler_1.insertAcontecimiento);
 router.get('/spatyal/getAnios/:id_capital', spatyal_controler_1.getAnios);
 router.post('/spatyal/rasgo/crear', auth_middlewares_1.authMiddleware, spatyal_controler_1.insertRasgo);
+router.get('/spatyal/getFotos/:id_rasgo/:id_anio', spatyal_controler_1.getFotos);
 exports.default = router;

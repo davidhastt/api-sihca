@@ -2,7 +2,7 @@ import {Router} from 'express';
 const router = Router();
 
 import {getCapitales, getPL, getNombresEntidades, getNombresMunByEnt, getEntidadPolygon, getMunicipioPolygon, getCapital, getPLbyEntAndCut, getRiosByEnt, getCLbyEnt, GetManzanasByEntAndCut, GetVialidadesByEntAndCut,
-    GetRasgosByEntAndCut, getConceptosCutAndEnt, getAcontecimientosByRasgo, updateAcontecimiento, insertAcontecimiento, getAnios, insertRasgo
+    GetRasgosByEntAndCut, getConceptosCutAndEnt, getAcontecimientosByRasgo, updateAcontecimiento, insertAcontecimiento, getAnios, insertRasgo, getFotos
 } from "../controllers/spatyal.controler";
 import { authMiddleware } from '../middlewares/auth.middlewares';
 //inicio
@@ -25,6 +25,6 @@ router.put('/spatyal/updateAcontecimiento/:id_acontecimiento', authMiddleware, u
 router.post('/spatyal/insertAcontecimiento', authMiddleware, insertAcontecimiento);
 router.get('/spatyal/getAnios/:id_capital', getAnios);
 router.post('/spatyal/rasgo/crear', authMiddleware, insertRasgo);
-
+router.get('/spatyal/getFotos/:id_rasgo/:id_anio', getFotos);
 
 export default router;

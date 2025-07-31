@@ -9,8 +9,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = exports.GetManzanasByEntAndCut = exports.GetVialidadesByEntAndCut = exports.GetRasgosByEntAndCut = exports.getConceptosCutAndEnt = exports.getAcontecimientosByRasgo = exports.updateAcontecimiento = exports.insertAcontecimiento = exports.getAnios = exports.insertRasgo = void 0;
+exports.getPL = exports.getCapitales = exports.getNombresEntidades = exports.getNombresMunByEnt = exports.getEntidadPolygon = exports.getMunicipioPolygon = exports.getCapital = exports.getPLbyEntAndCut = exports.getRiosByEnt = exports.getCLbyEnt = exports.GetManzanasByEntAndCut = exports.GetVialidadesByEntAndCut = exports.GetRasgosByEntAndCut = exports.getConceptosCutAndEnt = exports.getAcontecimientosByRasgo = exports.updateAcontecimiento = exports.insertAcontecimiento = exports.getAnios = exports.insertRasgo = exports.getFotos = void 0;
 const database_1 = require("../database");
+const getFotos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //console.log(req.params.id);
+    //res.send('recived');
+    try {
+        const id_rasgo = req.params.id_rasgo;
+        const id_anio = req.params.id_anio;
+        //        const response: QueryResult= await pool.query('SELECT * FROM public.anios WHERE id_capital=$1', [id_capital]);
+        const response = yield database_1.pool.query('SELECT * FROM public.fotos WHERE id_rasgo = $1 AND id_anio= $2 ORDER BY id_foto ASC ', [id_rasgo, id_anio]);
+        if (response.rowCount > 0) {
+            //const anios: Anio[]= response.rows;
+            const fotos = response.rows;
+            //const muns: Municipio[] = response.rows;            
+            return res.status(200).json({
+                "message": "Anios encontrados",
+                "status": 200,
+                "Respuesta": fotos
+            });
+        }
+        else {
+            return res.status(200).json({
+                "message": "No se encontro ningun año",
+                "status": 200,
+                "Respuesta": []
+            });
+        }
+    }
+    catch (_a) {
+        return res.status(500).json({
+            "message": "Error en el servidor",
+            "status": 500
+        });
+    }
+});
+exports.getFotos = getFotos;
 const insertRasgo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let newRasgo = req.body;
@@ -56,7 +90,7 @@ const getAnios = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
     }
-    catch (_a) {
+    catch (_b) {
         return res.status(500).json({
             "message": "Error en el servidor",
             "status": 500
@@ -126,7 +160,7 @@ const getAcontecimientosByRasgo = (req, res) => __awaiter(void 0, void 0, void 0
             });
         }
     }
-    catch (_b) {
+    catch (_c) {
         return res.status(500).json({
             "message": "Error en el servidor",
             "status": 500
@@ -162,7 +196,7 @@ const getConceptosCutAndEnt = (req, res) => __awaiter(void 0, void 0, void 0, fu
             });
         }
     }
-    catch (_c) {
+    catch (_d) {
         return res.status(500).json({
             "message": "Error en el servidor",
             "status": 500
@@ -511,7 +545,7 @@ const getNombresMunByEnt = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
         }
     }
-    catch (_d) {
+    catch (_e) {
         return res.status(500).json({
             "message": "Error en el servidor",
             "status": 500

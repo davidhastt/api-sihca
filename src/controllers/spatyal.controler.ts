@@ -6,6 +6,50 @@ import { Concepto } from "../interfaces/concepto.interface";
 import { Acontecimiento } from "../interfaces/acontecimiento.interface";
 import { Anio } from "../interfaces/anios.interface";
 import { Rasgo } from "../interfaces/rasgo.interface";
+import { Foto } from "../interfaces/foto.interface";
+
+
+export const getFotos=async (req:Request, res:Response): Promise<Response>=>{// con esta consulta sabemos cuantos conceptos de rasgos existen
+    //console.log(req.params.id);
+    //res.send('recived');
+    try{
+
+        const id_rasgo=req.params.id_rasgo;
+        const id_anio=req.params.id_anio;
+
+//        const response: QueryResult= await pool.query('SELECT * FROM public.anios WHERE id_capital=$1', [id_capital]);
+
+        const response: QueryResult= await pool.query('SELECT * FROM public.fotos WHERE id_rasgo = $1 AND id_anio= $2 ORDER BY id_foto ASC ', [id_rasgo, id_anio]);
+
+        if (response.rowCount > 0){
+
+            //const anios: Anio[]= response.rows;
+            const fotos: Foto[]=response.rows;
+
+            //const muns: Municipio[] = response.rows;            
+            return res.status(200).json({
+                "message":"Anios encontrados",
+                "status":200,
+                "Respuesta": fotos
+            });             
+        }
+        else{
+            return res.status(200).json({
+                "message":"No se encontro ningun año",
+                "status":200,
+                "Respuesta": []
+            }); 
+        }
+        
+            
+    }
+    catch{
+        return res.status(500).json({
+            "message":"Error en el servidor",
+            "status":500
+        });
+    }
+}
 
 
 export const insertRasgo=async (req:Request, res:Response): Promise<Response>=>{
@@ -22,7 +66,6 @@ export const insertRasgo=async (req:Request, res:Response): Promise<Response>=>{
 
 
         response = await pool.query('INSERT INTO public.direcciones(id_rasgo, direccion, geom, id_anio) VALUES ($1, $2, ST_GeomFromText($3, 4326), $4);',[newRasgo.id_rasgo, newRasgo.direccion, 'POINT('+ newRasgo.coordinates[0]+' '+ newRasgo.coordinates[1]+')', newRasgo.id_anio]);
-
 
 
         return res.json({
