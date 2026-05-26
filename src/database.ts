@@ -1,17 +1,17 @@
 import { Pool } from "pg";
-//import {config} from 'dotenv';
-//config();
+import {config} from 'dotenv';
+config();
 
 
 //si se desarrolla en entorno local inegi activa este bloque de codigo
 
 
 export const pool = new Pool({
-    user:'postgres',
-    host:'localhost',
-    password: 'postgres',
-    database: 'SIHCA',
-    port: 5432,
+    user:process.env.USER,
+    host:process.env.HOST,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
+    port: Number(process.env.DB_PORT)
     //ssl:true 
 });
 
